@@ -94,17 +94,17 @@ def draw_drag(screen, board, selected_piece, font):
         if expected_pos[1] - selected_piece[2] < -2:
             expected_pos[1] = selected_piece[2] - 2
             y = y - 2
-        # expected_pos = ((BOARD_POS[0] + (BOARD_POS[0]/2) + (expected_pos[0]*TILESIZE)), (BOARD_POS[1] + (BOARD_POS[1]/2) + (expected_pos[1]*TILESIZE)))
-        # expected_pos = (21.0,236.0)
-        print("pos={},{}, expected_pos={},{}, selected_piece pos ={}, {}" \
-                .format(pos[0], pos[1], expected_pos[0], expected_pos[1], selected_piece[1], selected_piece[2]))
+        logger.info("pos={},{}, expected_pos={},{}, selected_piece pos ={}, {}" \
+                    .format(pos[0], pos[1], expected_pos[0], expected_pos[1], selected_piece[1], selected_piece[2]))
         # screen.blit(s2, s2.get_rect(center=expected_pos + (1, 1)))
         screen.blit(s1, s1.get_rect(center=expected_pos))
-        # selected_rect = pygame.Rect(BOARD_POS[0] + selected_piece[1] * TILESIZE, BOARD_POS[1] + selected_piece[2] * TILESIZE, TILESIZE, TILESIZE)
-        selected_rect = pygame.Rect(BOARD_POS[0] + expected_pos[0] * TILESIZE, BOARD_POS[1] + expected_pos[1] * TILESIZE, TILESIZE, TILESIZE)
-        pygame.draw.line(screen, pygame.Color('red'), selected_rect.center, pygame.Vector2((BOARD_POS[0] + x * TILESIZE, BOARD_POS[1] + y * TILESIZE)))
-        logger.debug("draw_drag draw line red collored starting at {} pos and ending at {} pos".format(selected_rect.center, pygame.Vector2((BOARD_POS[0] + x * TILESIZE, BOARD_POS[1] + y * TILESIZE))))
-        return (x, y)
+        selected_rect = pygame.Rect(BOARD_POS[0] + selected_piece[1] * TILESIZE, BOARD_POS[1] + selected_piece[2] * TILESIZE, TILESIZE, TILESIZE)
+        expected_rect = pygame.Rect(BOARD_POS[0] + expected_pos[0] * TILESIZE, BOARD_POS[1] + expected_pos[1] * TILESIZE, TILESIZE, TILESIZE)
+        pygame.draw.line(screen, pygame.Color('red'), selected_rect.center, expected_rect.center)
+        logger.debug("draw_drag draw line red collored starting at {} pos and ending at {} pos" \
+                     .format(selected_rect.center, pygame.Vector2((BOARD_POS[0] + x * TILESIZE, BOARD_POS[1] + y * TILESIZE))))
+        # return (x, y)
+        return (expected_pos[0], expected_pos[1])
 
 def main():
     pygame.init()
@@ -141,7 +141,7 @@ def main():
         draw_selector(screen, piece, x, y)
         drop_pos = draw_drag(screen, board, selected_piece, font)
         if drop_pos is not None:
-            print("Drop Position is {}".format(drop_pos))
+            logger.info("Drop Position is {}".format(drop_pos))
 
         pygame.display.flip()
         clock.tick(60)
