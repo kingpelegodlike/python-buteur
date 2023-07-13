@@ -13,5 +13,8 @@ class Deck():
         else:
             return self.card_list[pos]
 
-    def remove_card(self):
-        self.card_list.pop()
+    def remove_card(self, pos = -1):
+        if pos != -1:
+            self.card_list.pop(pos)
+        else:
+            self.card_list.pop()

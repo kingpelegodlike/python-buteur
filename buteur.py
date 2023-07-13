@@ -95,7 +95,7 @@ def is_trash_deck_card_under_mouse():
     mouse_pos = pygame.Vector2(pygame.mouse.get_pos())
     mouse_pos_x = mouse_pos[0]
     mouse_pos_y = mouse_pos[1]
-    logger.debug("mouse pos is ({},{})".format(mouse_pos_x, mouse_pos_y))
+    logger.debug("Check mouse pos ({},{}) with trash".format(mouse_pos_x, mouse_pos_y))
     if mouse_pos_x >= 400 and mouse_pos_x < 465 and mouse_pos_y >= 30 and mouse_pos_y < 133:
         return True
     else:
@@ -161,6 +161,14 @@ def draw_selector(screen, piece, x, y):
     if piece != None:
         rect = (BOARD_POS[0] + x * TILESIZE, BOARD_POS[1] + y * TILESIZE, TILESIZE, TILESIZE)
         pygame.draw.rect(screen, (255, 0, 0, 50), rect, 2)
+
+def is_player_card_to_drop(player_card_selected):
+    if player_card_selected is not None:
+        if is_trash_deck_card_under_mouse():
+            return True
+        else:
+            return False
+    return False
 
 def is_current_deck_card_to_drop(current_deck_card_selected):
     if current_deck_card_selected:
@@ -233,7 +241,9 @@ def main():
     clock = pygame.time.Clock()
     turn = "player1"
     selected_piece = None
+    player_card_selected = None
     current_deck_card_selected = None
+    drop_player_card_to_trash = False
     drag_current_deck_card_to_trash = False
     drop_pos = None
     while True:
@@ -265,10 +275,15 @@ def main():
                     new_x, new_y = drop_pos
                     # board[new_y][new_x] = piece
                     # logger.debug("Drop piece at ( {},{} ) position".format(new_x,new_y))
+                if drop_player_card_to_trash:
+                    trash_deck.add_card(player_card_selected)
+                    if turn == "player1":
+                        player1_deck.remove_card(player_card_under_mouse)
                 if drop_current_deck_card_to_trash:
                     trash_deck.add_card(current_deck_card_selected)
                     current_deck.remove_card()
                 selected_piece = None
+                player_card_selected = None
                 current_deck_card_selected = None
                 drop_pos = None
 
@@ -285,6 +300,9 @@ def main():
             draw_trash_deck_card(trash_deck_surf, trash_deck.get_card())
         # draw_pieces(screen, board, font, selected_piece)
         # draw_selector(screen, piece, x, y)
+        drop_player_card_to_trash = is_player_card_to_drop(player_card_selected)
+        if drop_player_card_to_trash:
+            logger.info("Drop player card to trash")
         drop_current_deck_card_to_trash = is_current_deck_card_to_drop(current_deck_card_selected)
         if drop_current_deck_card_to_trash:
             logger.info("Drop current card to trash")
