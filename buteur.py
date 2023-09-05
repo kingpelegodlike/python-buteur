@@ -1,5 +1,6 @@
 import pygame
-import os
+from buttons2 import *
+import os, sys
 import logging
 
 logger = logging.getLogger('BUTEUR')
@@ -20,6 +21,7 @@ from deck import Deck
 
 TILESIZE = 16
 PLAYER_DECK_POS = (10, 370)
+PLAY_DECK_POS = (300, 163)
 CURRENT_DECK_POS = (300, 30)
 TRASH_DECK_POS = (400, 30)
 FOOTBALL_FIELD_POS = (10, 10)
@@ -33,6 +35,14 @@ def create_player_deck_surf(player_deck):
         card_img = pygame.image.load(os.path.join("img", "{}.png".format(card_obj.front_img)))
         player_deck_surf.blit(card_img, rect)
     return player_deck_surf
+
+def create_play_deck_surf():
+    play_deck_durf = pygame.Surface((140, 103))
+    rect1 = pygame.Rect(0, 0, 65, 103)
+    rect2 = pygame.Rect(75, 0, 65, 103)
+    pygame.draw.rect(play_deck_durf,"red",rect1,0)
+    pygame.draw.rect(play_deck_durf,"orange",rect2,0)
+    return play_deck_durf
 
 def create_current_deck_surf(last_card):
     current_deck_surf = pygame.Surface((65, 103))
@@ -101,27 +111,50 @@ def is_trash_deck_card_under_mouse():
     else:
         return False
 
-def get_square_under_mouse(board):
-    mouse_pos = pygame.Vector2(pygame.mouse.get_pos()) - BOARD_POS
-    x, y = [int(v // TILESIZE) for v in mouse_pos]
-    try: 
-        if x >= 0 and y >= 0: return (board[y][x], x, y)
-    except IndexError: pass
-    return None, None, None
+def is_play_deck_card_under_mouse(number):
+    mouse_pos = pygame.Vector2(pygame.mouse.get_pos())
+    mouse_pos_x = mouse_pos[0]
+    mouse_pos_y = mouse_pos[1]
+    if number == 1:
+        logger.debug("Check mouse pos ({},{}) with play area 1".format(mouse_pos_x, mouse_pos_y))
+        if mouse_pos_x >= 300 and mouse_pos_x < 365 and mouse_pos_y >= 163 and mouse_pos_y < 266:
+            return True
+        else:
+            return False
+    elif number == 2:
+        logger.debug("Check mouse pos ({},{}) with play area 2".format(mouse_pos_x, mouse_pos_y))
+        if mouse_pos_x >= 375 and mouse_pos_x < 440 and mouse_pos_y >= 163 and mouse_pos_y < 266:
+            return True
+        else:
+            return False
+    else:
+        return False
 
-def create_board():
-    board = []
-    for y in range(8):
-        board.append([])
-        for x in range(8):
-            board[y].append(None)
+def update_player_deck_surf(surface, player_deck):
+    for i in range(0, 8):
+        rect = pygame.Rect(10+(65+10)*i, 10, 65, 103)
+        if i < len(player_deck.card_list):
+            card_obj = player_deck.get_card(i)
+            card_img = pygame.image.load(os.path.join("img", "{}.png".format(card_obj.front_img)))
+            logger.debug("Update player card number {} with {} image".format(i, card_obj.front_img))
+            surface.blit(card_img, rect)
+        else:
+            logger.debug("Update player card number {} with red image".format(i))
+            pygame.draw.rect(surface, "red", rect, 0)
 
-    for x in range(0, 8):
-        board[1][x] = ('black', 'pawn')
-    for x in range(0, 8):
-        board[6][x] = ('white', 'pawn') 
-
-    return board
+def draw_play_deck_card(surface, card1, card2):
+    rect1 = pygame.Rect(0, 0, 65, 103)
+    rect2 = pygame.Rect(75, 0, 65, 103)
+    if card1 is not None:
+        card1_img = pygame.image.load(os.path.join("img", "{}.png".format(card1.front_img)))
+        surface.blit(card1_img, rect1)
+    else:
+        pygame.draw.rect(surface,"red",rect1,0)
+    if card2 is not None:
+        card2_img = pygame.image.load(os.path.join("img", "{}.png".format(card2.front_img)))
+        surface.blit(card2_img, rect2)
+    else:
+        pygame.draw.rect(surface,"red",rect2,0)
 
 def draw_current_deck_card(surface, last_card):
     rect = pygame.Rect(0, 0, 65, 103)
@@ -139,32 +172,10 @@ def draw_trash_deck_card(surface, last_card):
     else:
         pygame.draw.rect(surface,"red",rect,0)
 
-
-def draw_pieces(screen, board, font, selected_piece):
-    sx, sy = None, None
-    if selected_piece:
-        piece, sx, sy = selected_piece
-
-    for y in range(8):
-        for x in range(8): 
-            piece = board[y][x]
-            if piece:
-                selected = x == sx and y == sy
-                color, type = piece
-                s1 = font.render(type[0], True, pygame.Color('red' if selected else color))
-                s2 = font.render(type[0], True, pygame.Color('darkgrey'))
-                pos = pygame.Rect(BOARD_POS[0] + x * TILESIZE+1, BOARD_POS[1] + y * TILESIZE + 1, TILESIZE, TILESIZE)
-                screen.blit(s2, s2.get_rect(center=pos.center).move(1, 1))
-                screen.blit(s1, s1.get_rect(center=pos.center))
-
-def draw_selector(screen, piece, x, y):
-    if piece != None:
-        rect = (BOARD_POS[0] + x * TILESIZE, BOARD_POS[1] + y * TILESIZE, TILESIZE, TILESIZE)
-        pygame.draw.rect(screen, (255, 0, 0, 50), rect, 2)
-
-def is_player_card_to_drop(player_card_selected):
+def is_player_card_to_drop(player_card_selected, play_area_number):
     if player_card_selected is not None:
-        if is_trash_deck_card_under_mouse():
+        # if is_trash_deck_card_under_mouse():
+        if is_play_deck_card_under_mouse(play_area_number):
             return True
         else:
             return False
@@ -178,42 +189,12 @@ def is_current_deck_card_to_drop(current_deck_card_selected):
             return False
     return False
 
-def draw_drag(screen, board, selected_piece, font):
-    if selected_piece:
-        piece, x, y = get_square_under_mouse(board)
-        if x != None:
-            rect = (BOARD_POS[0] + x * TILESIZE, BOARD_POS[1] + y * TILESIZE, TILESIZE, TILESIZE)
-            pygame.draw.rect(screen, (0, 255, 0, 50), rect, 2)
-            logger.debug("draw_drag draw rect with (0, 255, 0, 50) color at {}".format(rect))
-
-        color, type = selected_piece[0]
-        s1 = font.render(type[0], True, pygame.Color(color))
-        s2 = font.render(type[0], True, pygame.Color('darkgrey'))
-        pos = pygame.Vector2(pygame.mouse.get_pos()) - BOARD_POS
-        expected_pos = [int(v // TILESIZE) for v in pos]
-        if abs(expected_pos[0] - selected_piece[1]) > 0:
-            expected_pos[0] = selected_piece[1]
-            x = expected_pos[0]
-        if expected_pos[1] - selected_piece[2] > 2:
-            expected_pos[1] = selected_piece[2] + 2
-            y = y + 2
-        if expected_pos[1] - selected_piece[2] < -2:
-            expected_pos[1] = selected_piece[2] - 2
-            y = y - 2
-        # expected_pos = ((BOARD_POS[0] + (BOARD_POS[0]/2) + (expected_pos[0]*TILESIZE)), (BOARD_POS[1] + (BOARD_POS[1]/2) + (expected_pos[1]*TILESIZE)))
-        # expected_pos = (21.0,236.0)
-        print("pos={},{}, expected_pos={},{}, selected_piece pos ={}, {}" \
-                .format(pos[0], pos[1], expected_pos[0], expected_pos[1], selected_piece[1], selected_piece[2]))
-        # screen.blit(s2, s2.get_rect(center=expected_pos + (1, 1)))
-        screen.blit(s1, s1.get_rect(center=expected_pos))
-        selected_rect = pygame.Rect(BOARD_POS[0] + selected_piece[1] * TILESIZE, BOARD_POS[1] + selected_piece[2] * TILESIZE, TILESIZE, TILESIZE)
-        expected_rect = pygame.Rect(BOARD_POS[0] + expected_pos[0] * TILESIZE, BOARD_POS[1] + expected_pos[1] * TILESIZE, TILESIZE, TILESIZE)
-        pygame.draw.line(screen, pygame.Color('red'), selected_rect.center, expected_rect.center)
-        logger.debug("draw_drag draw line red collored starting at {} pos and ending at {} pos".format(selected_rect.center, pygame.Vector2((BOARD_POS[0] + x * TILESIZE, BOARD_POS[1] + y * TILESIZE))))
-        # return (x, y)
-        return (expected_pos[0], expected_pos[1])
+def on_click_play():
+    print("Player click Play button")
+    click_play = True
 
 def main():
+    click_play = False
     pygame.init()
     font = pygame.font.SysFont('', 32)
     screen = pygame.display.set_mode((640, 540))
@@ -221,6 +202,7 @@ def main():
     player2_deck = Deck()
     current_deck = Deck()
     trash_deck = Deck()
+    play_deck = Deck()
     card = Card("front_blue_at3l")
     player1_deck.add_card(card)
     current_deck.add_card(card)
@@ -233,7 +215,15 @@ def main():
     player1_deck.add_card(card)
     player1_deck.add_card(card)
     current_deck.add_card(card)
+    # BUTTONS ISTANCES
+    game_on = 1
+    # buttons_def()
+    b0 = Button((300, 300), "Play cards", 55, "black on grey", style=0,
+        command=on_click_play)
     player_deck_surf = create_player_deck_surf(player1_deck)
+    play_deck_surf = create_play_deck_surf()
+    played_card_1 = None
+    played_card_2 = None
     current_deck_surf = create_current_deck_surf(current_deck.get_card())
     trash_deck_surf = create_trash_deck_surf()
     # board = create_board()
@@ -242,8 +232,10 @@ def main():
     turn = "player1"
     selected_piece = None
     player_card_selected = None
+    player_card_selected_number = -1
+    played_card_number = 1
     current_deck_card_selected = None
-    drop_player_card_to_trash = False
+    play_player_card = False
     drag_current_deck_card_to_trash = False
     drop_pos = None
     while True:
@@ -267,7 +259,8 @@ def main():
                 if player_card_under_mouse != -1:
                     if turn == "player1":
                         player_card_selected = player1_deck.get_card(player_card_under_mouse)
-                        logger.info("Selected player1 card with front image {}".format(player_card_selected.front_img))
+                        player_card_selected_number = player_card_under_mouse
+                        # logger.info("Selected player1 card number {} with front image {}".format(player_card_selected_number, player_card_selected.front_img))
             if e.type == pygame.MOUSEBUTTONUP:
                 if drop_pos:
                     # piece, old_x, old_y = selected_piece
@@ -275,24 +268,71 @@ def main():
                     new_x, new_y = drop_pos
                     # board[new_y][new_x] = piece
                     # logger.debug("Drop piece at ( {},{} ) position".format(new_x,new_y))
-                if drop_player_card_to_trash:
-                    trash_deck.add_card(player_card_selected)
+                if play_player_card:
+                    # trash_deck.add_card(player_card_selected)
+                    if played_card_number == 1:
+                        played_card_1 = player_card_selected
+                        play_deck.add_card(player_card_selected)
+                    if played_card_number == 2:
+                        played_card_2 = player_card_selected
+                        play_deck.add_card(player_card_selected)
+                    played_card_number += 1
+                    
                     if turn == "player1":
-                        player1_deck.remove_card(player_card_under_mouse)
+                        logger.debug("Remove Player card number {}".format(player_card_selected_number))
+                        player1_deck.remove_card(player_card_selected_number)
+                        logger.debug("Player have {} cards left".format(len(player1_deck.card_list)))
                 if drop_current_deck_card_to_trash:
                     trash_deck.add_card(current_deck_card_selected)
                     current_deck.remove_card()
                 selected_piece = None
                 player_card_selected = None
+                player_card_selected_number = -1
                 current_deck_card_selected = None
                 drop_pos = None
 
         screen.fill(pygame.Color('grey'))
+        if game_on:
+            # if click_play:
+            if b0.pressed == 0:
+                logger.info("Play action")
+                click_play = False
+                while play_deck.get_nb_cards() > 0:
+                    logger.info("Remove card from Play Deck")
+                    card = play_deck.remove_card()
+                    logger.info("Add card to Trash Deck")
+                    trash_deck.add_card(card)
+                    logger.info("Remove card from current Deck with {} cards".format(current_deck.get_nb_cards()))
+                    current_deck.remove_card()
+                    card = current_deck.get_card()
+                    # logger.info(card.print())
+                    current_deck_card_selected = current_deck.get_card()
+                    if turn == "player1" and card is not None:
+                        logger.info("Add card to Player1 Deck")
+                        player1_deck.add_card(card)
+                played_card_1 = None
+                played_card_2 = None
+                player_card_selected = None
+                player_card_selected_number = -1
+                played_card_number = 1
+                current_deck_card_selected = None
+                b0.style = 0
+                b0.pressed = 1
+            buttons.update()
+            buttons.draw(screen)
+        else:
+            pygame.quit()
+            sys.exit()
+        buttons.draw(screen)
         if turn == "player1":
             screen.blit(player_deck_surf, PLAYER_DECK_POS)
+        screen.blit(play_deck_surf, PLAY_DECK_POS)
         screen.blit(current_deck_surf, CURRENT_DECK_POS)
         screen.blit(trash_deck_surf, TRASH_DECK_POS)
         screen.blit(football_field_surf, FOOTBALL_FIELD_POS)
+        if turn == "player1":
+            update_player_deck_surf(player_deck_surf, player1_deck)
+        draw_play_deck_card(play_deck_surf, played_card_1, played_card_2)
         draw_current_deck_card(current_deck_surf, current_deck.get_card())
         if len(trash_deck.card_list) == 0:
             draw_trash_deck_card(trash_deck_surf, None)
@@ -300,9 +340,10 @@ def main():
             draw_trash_deck_card(trash_deck_surf, trash_deck.get_card())
         # draw_pieces(screen, board, font, selected_piece)
         # draw_selector(screen, piece, x, y)
-        drop_player_card_to_trash = is_player_card_to_drop(player_card_selected)
-        if drop_player_card_to_trash:
-            logger.info("Drop player card to trash")
+        play_player_card = is_player_card_to_drop(player_card_selected, played_card_number)
+        if play_player_card:
+            logger.info("Play player card number {}".format(played_card_number))
+            b0.style = 1
         drop_current_deck_card_to_trash = is_current_deck_card_to_drop(current_deck_card_selected)
         if drop_current_deck_card_to_trash:
             logger.info("Drop current card to trash")
