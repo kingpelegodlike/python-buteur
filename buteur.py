@@ -70,7 +70,7 @@ def create_football_field_surf():
             except FileNotFoundError as fnfe:
                 # logger.error(fnfe)
                 football_field_piece_img = pygame.image.load(os.path.join("img", "football_field_x0_y0.png"))
-            football_field_piece_img = pygame.transform.scale(football_field_piece_img, (TILESIZE, TILESIZE)) 
+            football_field_piece_img = pygame.transform.scale(football_field_piece_img, (TILESIZE, TILESIZE))
             # pygame.draw.rect(football_field_surf, pygame.Color('darkgrey' if dark else 'beige'), rect)
             football_field_surf.blit(football_field_piece_img, rect.topleft)
             dark = not dark
