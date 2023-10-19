@@ -58,7 +58,7 @@ def create_trash_deck_surf():
     pygame.draw.rect(trash_deck_durf,"red",rect,0)
     return trash_deck_durf
 
-def create_football_field_surf():
+def create_football_field_surf(ball_x_pos, ball_y_pos):
     football_field_surf = pygame.Surface((TILESIZE*16, TILESIZE*22))
     dark = False
     for y in range(22):
@@ -75,6 +75,9 @@ def create_football_field_surf():
             football_field_surf.blit(football_field_piece_img, rect.topleft)
             dark = not dark
         dark = not dark
+    rect = pygame.Rect(ball_x_pos*TILESIZE, ball_y_pos*TILESIZE, TILESIZE, TILESIZE)
+    ball_img = pygame.image.load(os.path.join("img", "ball.png"))
+    football_field_surf.blit(ball_img, rect.topleft)
     return football_field_surf
 
 def is_player_card_under_mouse():
@@ -159,7 +162,8 @@ def draw_play_deck_card(surface, card1, card2):
 def draw_current_deck_card(surface, last_card):
     rect = pygame.Rect(0, 0, 65, 103)
     if last_card is not None:
-        last_card_img = pygame.image.load(os.path.join("img", "{}.png".format(last_card.front_img)))
+        # last_card_img = pygame.image.load(os.path.join("img", "{}.png".format(last_card.front_img)))
+        last_card_img = last_card.back_img
         surface.blit(last_card_img, rect.topleft)
     else:
         pygame.draw.rect(surface,"red",rect,0)
@@ -203,11 +207,12 @@ def main():
     current_deck = Deck()
     trash_deck = Deck()
     play_deck = Deck()
-    card = Card("front_blue_at3l")
+    card = Card("attacker_blue_at3l")
     player1_deck.add_card(card)
     current_deck.add_card(card)
-    card = Card("front_blue_at4s_1")
+    card = Card("corner_red")
     player1_deck.add_card(card)
+    card = Card("attacker_blue_at4s")
     player1_deck.add_card(card)
     player1_deck.add_card(card)
     player1_deck.add_card(card)
@@ -215,6 +220,8 @@ def main():
     player1_deck.add_card(card)
     player1_deck.add_card(card)
     current_deck.add_card(card)
+    ball_x_pos = 7
+    ball_y_pos = 10
     # BUTTONS ISTANCES
     game_on = 1
     # buttons_def()
@@ -227,7 +234,7 @@ def main():
     current_deck_surf = create_current_deck_surf(current_deck.get_card())
     trash_deck_surf = create_trash_deck_surf()
     # board = create_board()
-    football_field_surf = create_football_field_surf()
+    football_field_surf = create_football_field_surf(ball_x_pos, ball_y_pos)
     clock = pygame.time.Clock()
     turn = "player1"
     selected_piece = None
@@ -299,17 +306,17 @@ def main():
                 click_play = False
                 while play_deck.get_nb_cards() > 0:
                     logger.info("Remove card from Play Deck")
-                    card = play_deck.remove_card()
-                    logger.info("Add card to Trash Deck")
-                    trash_deck.add_card(card)
+                    play_card = play_deck.remove_card()
+                    logger.info("Add card {} to Trash Deck".format(play_card))
+                    trash_deck.add_card(play_card)
                     logger.info("Remove card from current Deck with {} cards".format(current_deck.get_nb_cards()))
-                    current_deck.remove_card()
-                    card = current_deck.get_card()
-                    # logger.info(card.print())
+                    first_draw_card = current_deck.remove_card()
+                    # first_draw_card = current_deck.get_card()
+                    # logger.info(first_draw_card.print())
                     current_deck_card_selected = current_deck.get_card()
-                    if turn == "player1" and card is not None:
-                        logger.info("Add card to Player1 Deck")
-                        player1_deck.add_card(card)
+                    if turn == "player1" and first_draw_card is not None:
+                        logger.info("Add card {} to Player1 Deck".format(first_draw_card))
+                        player1_deck.add_card(first_draw_card)
                 played_card_1 = None
                 played_card_2 = None
                 player_card_selected = None
@@ -338,6 +345,7 @@ def main():
             draw_trash_deck_card(trash_deck_surf, None)
         else:
             draw_trash_deck_card(trash_deck_surf, trash_deck.get_card())
+        football_field_surf = create_football_field_surf(ball_x_pos, ball_y_pos)
         # draw_pieces(screen, board, font, selected_piece)
         # draw_selector(screen, piece, x, y)
         play_player_card = is_player_card_to_drop(player_card_selected, played_card_number)

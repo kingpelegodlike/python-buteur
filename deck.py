@@ -22,8 +22,8 @@ class Deck():
     def remove_card(self, pos = -1):
         try:
             if pos != -1:
-                self.card_list.pop(pos)
+                return self.card_list.pop(pos)
             else:
-                self.card_list.pop()
+                return self.card_list.pop()
         except IndexError as e:
-            pass
+            return None
