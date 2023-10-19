@@ -44,4 +44,3 @@ jobs:
         path: |
           junit/test-results.xml
           htmlcov
-        if: ${{ always() }}
