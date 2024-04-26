@@ -1,6 +1,7 @@
 import pygame
 from buttons2 import *
 import os, sys
+import pathlib
 import logging
 
 logger = logging.getLogger('BUTEUR')
@@ -32,7 +33,8 @@ def create_player_deck_surf(player_deck):
     for i in range(0, len(player_deck.card_list)):
         rect = pygame.Rect(10+(65+10)*i, 10, 65, 103)
         card_obj = player_deck.get_card(i)
-        card_img = pygame.image.load(os.path.join("img", "{}.png".format(card_obj.front_img)))
+        # card_img = pygame.image.load(os.path.join("img", "{}.png".format(card_obj.front_img)))
+        card_img = pygame.image.load(card_obj.front_img)
         player_deck_surf.blit(card_img, rect)
     return player_deck_surf
 
@@ -47,7 +49,8 @@ def create_play_deck_surf():
 def create_current_deck_surf(last_card):
     current_deck_surf = pygame.Surface((65, 103))
     rect = pygame.Rect(0, 0, 65, 103)
-    last_card_img = pygame.image.load(os.path.join("img", "{}.png".format(last_card.front_img)))
+    # last_card_img = pygame.image.load(os.path.join("img", "{}.png".format(last_card.front_img)))
+    last_card_img = pygame.image.load(last_card.front_img)
     current_deck_surf.blit(last_card_img, rect.topleft)
     return current_deck_surf
 
@@ -138,7 +141,8 @@ def update_player_deck_surf(surface, player_deck):
         rect = pygame.Rect(10+(65+10)*i, 10, 65, 103)
         if i < len(player_deck.card_list):
             card_obj = player_deck.get_card(i)
-            card_img = pygame.image.load(os.path.join("img", "{}.png".format(card_obj.front_img)))
+            # card_img = pygame.image.load(os.path.join("img", "{}.png".format(card_obj.front_img)))
+            card_img = pygame.image.load(card_obj.front_img)
             logger.debug("Update player card number {} with {} image".format(i, card_obj.front_img))
             surface.blit(card_img, rect)
         else:
@@ -149,12 +153,14 @@ def draw_play_deck_card(surface, card1, card2):
     rect1 = pygame.Rect(0, 0, 65, 103)
     rect2 = pygame.Rect(75, 0, 65, 103)
     if card1 is not None:
-        card1_img = pygame.image.load(os.path.join("img", "{}.png".format(card1.front_img)))
+        # card1_img = pygame.image.load(os.path.join("img", "{}.png".format(card1.front_img)))
+        card1_img = pygame.image.load(card1.front_img)
         surface.blit(card1_img, rect1)
     else:
         pygame.draw.rect(surface,"red",rect1,0)
     if card2 is not None:
-        card2_img = pygame.image.load(os.path.join("img", "{}.png".format(card2.front_img)))
+        # card2_img = pygame.image.load(os.path.join("img", "{}.png".format(card2.front_img)))
+        card2_img = pygame.image.load(card2.front_img)
         surface.blit(card2_img, rect2)
     else:
         pygame.draw.rect(surface,"red",rect2,0)
@@ -171,7 +177,8 @@ def draw_current_deck_card(surface, last_card):
 def draw_trash_deck_card(surface, last_card):
     rect = pygame.Rect(0, 0, 65, 103)
     if last_card is not None:
-        last_card_img = pygame.image.load(os.path.join("img", "{}.png".format(last_card.front_img)))
+        # last_card_img = pygame.image.load(os.path.join("img", "{}.png".format(last_card.front_img)))
+        last_card_img = pygame.image.load(last_card.front_img)
         surface.blit(last_card_img, rect.topleft)
     else:
         pygame.draw.rect(surface,"red",rect,0)
@@ -207,19 +214,21 @@ def main():
     current_deck = Deck()
     trash_deck = Deck()
     play_deck = Deck()
-    card = Card("attacker_blue_at3l")
+    card = Card("img/card_attacker_blue_at3l.png")
     player1_deck.add_card(card)
     current_deck.add_card(card)
-    card = Card("corner_red")
+    card = Card("img/card_corner_red.png")
     player1_deck.add_card(card)
-    card = Card("attacker_blue_at4s")
-    player1_deck.add_card(card)
-    player1_deck.add_card(card)
+    card = Card("img/card_attacker_blue_at4s.png")
     player1_deck.add_card(card)
     player1_deck.add_card(card)
     player1_deck.add_card(card)
     player1_deck.add_card(card)
-    current_deck.add_card(card)
+    player1_deck.add_card(card)
+    player1_deck.add_card(card)
+    for card_file_path in pathlib.Path("./img").rglob("card_*.png"):
+        card = Card(card_file_path)
+        current_deck.add_card(card)
     ball_x_pos = 7
     ball_y_pos = 10
     # BUTTONS ISTANCES
