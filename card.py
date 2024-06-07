@@ -16,27 +16,41 @@ class Card():
 
     def __str__(self):
         direction = ""
-        if hasattr(self, "first_directions"):
-            for directions in self.first_directions:
-                direction += "{}{}".format(directions[0], directions[1])
-            direction = self.first_directions
-        if hasattr(self, "second_directions"):
-            for directions in self.second_directions:
-                direction += "{}{}".format(directions[0], directions[1])
-            direction = self.second_directions
+        if hasattr(self, "first_move_list"):
+            direction += "first moves:"
+            for directions in self.first_move_list:
+                direction += "({},{})".format(directions[0], directions[1])
+            # direction = self.first_directions
+        if hasattr(self, "second_move_list"):
+            direction += " second moves:"
+            for directions in self.second_move_list:
+                direction += "({},{})".format(directions[0], directions[1])
+            # direction = self.second_directions
+        if hasattr(self, "third_move_list"):
+            direction += " third moves:"
+            for directions in self.third_move_list:
+                direction += "({},{})".format(directions[0], directions[1])
+            # direction = self.third_directions
         return  "type:'{}', color:'{}', direction:'{}'" \
                 .format(self.type, self.color, direction)
 
     def print(self):
         direction = ""
-        if hasattr(self, "first_directions"):
-            for directions in self.first_directions:
-                direction += "{}{}".format(directions[0], directions[1])
-            direction = self.first_directions
-        if hasattr(self, "second_directions"):
-            for directions in self.second_directions:
-                direction += "{}{}".format(directions[0], directions[1])
-            direction = self.second_directions
+        if hasattr(self, "first_move_list"):
+            direction += "first moves:"
+            for directions in self.first_move_list:
+                direction += "({},{})".format(directions[0], directions[1])
+            # direction = self.first_directions
+        if hasattr(self, "second_move_list"):
+            direction += " second moves:"
+            for directions in self.second_move_list:
+                direction += "({},{})".format(directions[0], directions[1])
+            # direction = self.second_directions
+        if hasattr(self, "third_move_list"):
+            direction += " third moves:"
+            for directions in self.third_move_list:
+                direction += "({},{})".format(directions[0], directions[1])
+            # direction = self.third_directions
         return  "type:'{}', color:'{}', direction:'{}'" \
                 .format(self.type, self.color, direction)
 
@@ -49,7 +63,7 @@ class Card():
             self.type = attributes_list[1]
             if self.type == "attacker" or self.type == "corner":
                 if len(attributes_list) > 2:
-                    self.color = attributes_list[2]
+                    self.color = attributes_list[2] # blue or red or hand
                     if len(attributes_list) > 3:
                         self.first_move_list = []
                         first_directions = attributes_list[3]
@@ -70,8 +84,10 @@ class Card():
                                     self.first_move_list.append((int(direction_len), int(direction_len)))
                         if len(attributes_list) > 4:
                             print("{}:{}".format(len(attributes_list), attributes_list))
-                            self.second_move_list = []
                             second_directions = attributes_list[4]
+                            if second_directions.startswith("v"):
+                                return
+                            self.second_move_list = []
                             pattern = "(\d+)(s|l|r|dl|dr)"
                             for match in re.finditer(pattern, second_directions):
                                 for i in range(1, len(match.groups())):
@@ -87,7 +103,28 @@ class Card():
                                         self.second_move_list.append((-int(direction_len), int(direction_len)))
                                     elif direction == "dr":
                                         self.second_move_list.append((int(direction_len), int(direction_len)))
-            elif self.type == "freekick" or self.type == "goalkeeper" or self.type == "penalty":
+                        if len(attributes_list) > 5:
+                            print("{}:{}".format(len(attributes_list), attributes_list))
+                            third_directions = attributes_list[5]
+                            if third_directions.startswith("v"):
+                                return
+                            self.third_move_list = []
+                            pattern = "(\d+)(s|l|r|dl|dr)"
+                            for match in re.finditer(pattern, third_directions):
+                                for i in range(1, len(match.groups())):
+                                    direction_len = match.groups(i)[0]
+                                    direction = match.groups(i)[1]
+                                    if direction == "s":
+                                        self.third_move_list.append((0, int(direction_len)))
+                                    elif direction == "l":
+                                        self.third_move_list.append((-int(direction_len), 0))
+                                    elif direction == "r":
+                                        self.third_move_list.append((int(direction_len), 0))
+                                    elif direction == "dl":
+                                        self.third_move_list.append((-int(direction_len), int(direction_len)))
+                                    elif direction == "dr":
+                                        self.third_move_list.append((int(direction_len), int(direction_len)))
+            elif self.type == "freekick" or self.type == "goalkeeper":
                 self.color = None
                 if len(attributes_list) > 2:
                     self.first_move_list = []
@@ -126,5 +163,8 @@ class Card():
                                     self.second_move_list.append((-int(direction_len), int(direction_len)))
                                 elif direction == "dr":
                                     self.second_move_list.append((int(direction_len), int(direction_len)))
+            elif self.type == "penalty":
+                self.color = None
+                # move to the penalty spot
             else:
                 delattr(self, "type")

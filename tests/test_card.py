@@ -29,6 +29,14 @@ def test_card_attacker_two_directions():
     assert card.first_move_list == [(-3, 0), (-3, 3), (0, 3), (3, 3), (3, 0)]
     assert card.second_move_list == [(-2, 0), (-2, 2), (0, 2), (2, 2), (2, 0)]
 
+def test_card_attacker_three_directions():
+    card = Card("card_attacker_blue_at3l3dl3s3dr3r_at2l2dl2s2dr2r_at2l2dl2s2dr2r.png")
+    assert card.type == "attacker"
+    assert card.color == "blue"
+    assert card.first_move_list == [(-3, 0), (-3, 3), (0, 3), (3, 3), (3, 0)]
+    assert card.second_move_list == [(-2, 0), (-2, 2), (0, 2), (2, 2), (2, 0)]
+    assert card.third_move_list == [(-2, 0), (-2, 2), (0, 2), (2, 2), (2, 0)]
+
 def test_card_freekick_one_direction():
     card = Card("card_freekick_at1l1dl1s1dr1r.png")
     assert card.type == "freekick"
@@ -63,3 +71,8 @@ def test_card_goalkeeper_two_directions():
     assert card.color == None
     assert card.first_move_list == [(-1, 0), (-1, 1), (0, 1), (1, 1), (1, 0)]
     assert card.second_move_list == [(-4, 0), (-4, 4), (0, 4), (4, 4), (4, 0)]
+
+def test_card_penalty():
+    card = Card("card_penalty.png")
+    assert card.type == "penalty"
+    assert card.color == None

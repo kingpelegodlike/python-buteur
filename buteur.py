@@ -214,21 +214,31 @@ def main():
     current_deck = Deck()
     trash_deck = Deck()
     play_deck = Deck()
-    card = Card("img/card_attacker_blue_at3l.png")
-    player1_deck.add_card(card)
-    current_deck.add_card(card)
-    card = Card("img/card_corner_red.png")
-    player1_deck.add_card(card)
-    card = Card("img/card_attacker_blue_at4s.png")
-    player1_deck.add_card(card)
-    player1_deck.add_card(card)
-    player1_deck.add_card(card)
-    player1_deck.add_card(card)
-    player1_deck.add_card(card)
-    player1_deck.add_card(card)
+    # card = Card("img/card_attacker_blue_at3l.png")
+    # player1_deck.add_card(card)
+    # current_deck.add_card(card)
+    # card = Card("img/card_corner_red.png")
+    # player1_deck.add_card(card)
+    # card = Card("img/card_attacker_blue_at4s.png")
+    # player1_deck.add_card(card)
+    # player1_deck.add_card(card)
+    # player1_deck.add_card(card)
+    # player1_deck.add_card(card)
+    # player1_deck.add_card(card)
+    # player1_deck.add_card(card)
     for card_file_path in pathlib.Path("./img").rglob("card_*.png"):
         card = Card(card_file_path)
+        logger.debug("Add card {} to Current Deck".format(card))
         current_deck.add_card(card)
+    for i in range(0, 8):
+        # player1_deck.add_card(current_deck.remove_card())
+        card = current_deck.remove_card()
+        logger.debug("Add card {} to Player1 Deck".format(card))
+        player1_deck.add_card(card)
+        # player2_deck.add_card(current_deck.remove_card())
+        card = current_deck.remove_card()
+        logger.debug("Add card {} to Player2 Deck".format(card))
+        player2_deck.add_card(card)
     ball_x_pos = 7
     ball_y_pos = 10
     # BUTTONS ISTANCES
@@ -359,7 +369,7 @@ def main():
         # draw_selector(screen, piece, x, y)
         play_player_card = is_player_card_to_drop(player_card_selected, played_card_number)
         if play_player_card:
-            logger.info("Play player card number {}".format(played_card_number))
+            logger.info("Play player card {} number {}".format(player_card_selected.print(), played_card_number))
             b0.style = 1
         drop_current_deck_card_to_trash = is_current_deck_card_to_drop(current_deck_card_selected)
         if drop_current_deck_card_to_trash:
