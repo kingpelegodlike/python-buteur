@@ -11,8 +11,24 @@ class Card():
         self.get_attributes_from_file_name(pathlib.Path(front_image).stem)
 
     def __repr__(self):
+        direction = ""
+        if hasattr(self, "first_move_list"):
+            direction += "first moves:"
+            for directions in self.first_move_list:
+                direction += "({},{})".format(directions[0], directions[1])
+            # direction = self.first_directions
+        if hasattr(self, "second_move_list"):
+            direction += " second moves:"
+            for directions in self.second_move_list:
+                direction += "({},{})".format(directions[0], directions[1])
+            # direction = self.second_directions
+        if hasattr(self, "third_move_list"):
+            direction += " third moves:"
+            for directions in self.third_move_list:
+                direction += "({},{})".format(directions[0], directions[1])
+            # direction = self.third_directions
         return  "type:'{}', color:'{}', direction:'{}'" \
-                .format(self.type, self.color, self.direction_list)
+                .format(self.type, self.color, direction)
 
     def __str__(self):
         direction = ""

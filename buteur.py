@@ -1,8 +1,13 @@
 import pygame
 from buttons2 import *
-import os, sys
+# import buttons2
+import os
+import sys
 import pathlib
 import logging
+
+from card import Card
+from deck import Deck
 
 logger = logging.getLogger('BUTEUR')
 logger.setLevel(logging.DEBUG)
@@ -16,9 +21,6 @@ loghdlr.setFormatter(
     logging.Formatter('[%(asctime)s] %(name)s - %(levelname)s - %(message)s'))
 loghdlr.setLevel(logging.DEBUG)
 logger.addHandler(loghdlr)
-
-from card import Card
-from deck import Deck
 
 TILESIZE = 16
 PLAYER_DECK_POS = (10, 370)
@@ -263,6 +265,7 @@ def main():
     current_deck_card_selected = None
     play_player_card = False
     drag_current_deck_card_to_trash = False
+    drop_current_deck_card_to_trash = False
     drop_pos = None
     while True:
         # piece, x, y = get_square_under_mouse(board)
@@ -288,10 +291,10 @@ def main():
                         player_card_selected_number = player_card_under_mouse
                         # logger.info("Selected player1 card number {} with front image {}".format(player_card_selected_number, player_card_selected.front_img))
             if e.type == pygame.MOUSEBUTTONUP:
-                if drop_pos:
+                # if drop_pos:
                     # piece, old_x, old_y = selected_piece
                     # board[old_y][old_x] = 0
-                    new_x, new_y = drop_pos
+                    # new_x, new_y = drop_pos
                     # board[new_y][new_x] = piece
                     # logger.debug("Drop piece at ( {},{} ) position".format(new_x,new_y))
                 if play_player_card:
@@ -303,7 +306,7 @@ def main():
                         played_card_2 = player_card_selected
                         play_deck.add_card(player_card_selected)
                     played_card_number += 1
-                    
+
                     if turn == "player1":
                         logger.debug("Remove Player card number {}".format(player_card_selected_number))
                         player1_deck.remove_card(player_card_selected_number)

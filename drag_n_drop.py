@@ -114,7 +114,7 @@ def main():
     board_surf = create_board_surf()
     clock = pygame.time.Clock()
     selected_piece = None
-    drop_pos = None
+    drop_pos = (-250, -250)
     while True:
         piece, x, y = get_square_under_mouse(board)
         events = pygame.event.get()
@@ -126,7 +126,7 @@ def main():
                     selected_piece = piece, x, y
                     logger.debug("Selected piece at ( {},{} ) position".format(x,y))
             if e.type == pygame.MOUSEBUTTONUP:
-                if drop_pos:
+                if drop_pos and drop_pos != (-250, -250):
                     piece, old_x, old_y = selected_piece
                     board[old_y][old_x] = 0
                     new_x, new_y = drop_pos
