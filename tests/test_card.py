@@ -1,7 +1,8 @@
 import pytest
-from card import Card
+from buteur.card import Card
 
 def test_card_unknown():
+    """Test the creation of a card with an unknown image."""
     card = Card("unknown_card.png")
     assert not hasattr(card, "type")
     assert not hasattr(card, "color")

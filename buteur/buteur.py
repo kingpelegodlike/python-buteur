@@ -1,13 +1,14 @@
-import pygame
-from buttons2 import *
-# import buttons2
 import os
 import sys
 import pathlib
 import logging
-
+from buttons2 import Button, buttons
 from card import Card
 from deck import Deck
+import pygame
+
+# from buttons2 import *
+# import buttons2
 
 logger = logging.getLogger('BUTEUR')
 logger.setLevel(logging.DEBUG)
@@ -71,8 +72,9 @@ def create_football_field_surf(ball_x_pos, ball_y_pos):
             rect = pygame.Rect(x*TILESIZE, y*TILESIZE, TILESIZE, TILESIZE)
             # football_field_piece_img = pygame.image.load(os.path.join("img", "football_field_x0_y0.png"))
             try:
-                football_field_piece_img = pygame.image.load(os.path.join("img", "football_field_x{}_y{}.png".format(x, y)))
-            except FileNotFoundError as fnfe:
+                football_field_piece_img = pygame.image.load(os.path.join("img", f"football_field_x{x}_y{y}.png"))
+            # except FileNotFoundError as fnfe:
+            except FileNotFoundError:
                 # logger.error(fnfe)
                 football_field_piece_img = pygame.image.load(os.path.join("img", "football_field_x0_y0.png"))
             football_field_piece_img = pygame.transform.scale(football_field_piece_img, (TILESIZE, TILESIZE))
@@ -89,21 +91,22 @@ def is_player_card_under_mouse():
     mouse_pos = pygame.Vector2(pygame.mouse.get_pos())
     mouse_pos_x = mouse_pos[0]
     mouse_pos_y = mouse_pos[1]
-    logger.debug("Check mouse pos is ({},{}) with player cards".format(mouse_pos_x, mouse_pos_y))
+    logger.debug(f"Check mouse pos is ({mouse_pos_x},{mouse_pos_y}) with player cards")
     player_card_under_mouse = -1
     for i in range (0, 8):
         min_pos_x_expected =  10+(65+10)*i
         max_pos_x_expected = min_pos_x_expected + 65
         if mouse_pos_x >= min_pos_x_expected and mouse_pos_x < max_pos_x_expected and mouse_pos_y >= 380 and mouse_pos_y < 483:
-            logger.debug("found under card number '{}'".format(i))
+            logger.debug(f"found under card number '{i}'")
             player_card_under_mouse = i
     return player_card_under_mouse
 
 def is_current_deck_card_under_mouse():
+    """Check if the mouse is over the current deck card."""
     mouse_pos = pygame.Vector2(pygame.mouse.get_pos())
     mouse_pos_x = mouse_pos[0]
     mouse_pos_y = mouse_pos[1]
-    logger.debug("mouse pos is ({},{})".format(mouse_pos_x, mouse_pos_y))
+    logger.debug(f"mouse pos is ({mouse_pos_x},{mouse_pos_y})")
     if mouse_pos_x >= 300 and mouse_pos_x < 365 and mouse_pos_y >= 30 and mouse_pos_y < 133:
         return True
     else:
@@ -337,7 +340,7 @@ def main():
                     # logger.info(first_draw_card.print())
                     current_deck_card_selected = current_deck.get_card()
                     if turn == "player1" and first_draw_card is not None:
-                        logger.info("Add card {} to Player1 Deck".format(first_draw_card))
+                        logger.info(f"Add card {first_draw_card} to Player1 Deck")
                         player1_deck.add_card(first_draw_card)
                 played_card_1 = None
                 played_card_2 = None
