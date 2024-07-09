@@ -14,16 +14,14 @@ class Deck():
     def get_card(self, pos = -1):
         if len(self.card_list) == 0:
             return None
-        elif pos > len(self.card_list):
+        if pos > len(self.card_list):
             return None
-        else:
-            return self.card_list[pos]
+        return self.card_list[pos]
 
     def remove_card(self, pos = -1):
         try:
             if pos != -1:
                 return self.card_list.pop(pos)
-            else:
-                return self.card_list.pop()
-        except IndexError as e:
+            return self.card_list.pop()
+        except IndexError:
             return None

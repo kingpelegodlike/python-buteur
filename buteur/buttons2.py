@@ -51,7 +51,7 @@ class Button(pygame.sprite.Sprite):
         elif self.style == 2:
             self.draw_button2()
         self.hover()
-        self.click() 
+        self.click()
 
     def draw_button0(self):
         ''' a linear border '''
@@ -67,7 +67,7 @@ class Button(pygame.sprite.Sprite):
         pygame.draw.line(screen, (50, 50, 50), (self.x, self.y + self.h), (self.x + self.w , self.y + self.h), 5)
         pygame.draw.line(screen, (50, 50, 50), (self.x + self.w , self.y + self.h), [self.x + self.w , self.y], 5)
         # background of the button
-        pygame.draw.rect(screen, self.bg, (self.x, self.y, self.w , self.h))  
+        pygame.draw.rect(screen, self.bg, (self.x, self.y, self.w , self.h))
 
     def draw_button2(self):
         ''' a linear border '''
@@ -83,7 +83,7 @@ class Button(pygame.sprite.Sprite):
             # pygame.mouse.set_cursor(*pygame.cursors.diamond)
         else:
             self.colors = self.original_colors
-            
+
         self.render()
 
     def click(self):
@@ -112,13 +112,9 @@ def on_save():
     print("This is Save")
 
 def buttons_def():
-    b0 = Button((300, 300), "Click me now", 55, "black on white",
-        command=on_click)
-    b1 = Button((10, 100), "Run the program", 40, "black on red", command=on_run)
-
-    b2 = Button((10, 170), "Save this file", 36, "red on yellow",
-        hover_colors="blue on orange", style=2, borderc=(255,255,0),
-        command=on_save)
+    Button((300, 300), "Click me now", 55, "black on white", command=on_click)
+    Button((10, 100), "Run the program", 40, "black on red", command=on_run)
+    Button((10, 170), "Save this file", 36, "red on yellow", hover_colors="blue on orange", style=2, borderc=(255,255,0), command=on_save)
 
 # ======================= this code is just for example, start the program from the main file
 # in the main folder, I mean, you can also use this file only, but I prefer from the main file
@@ -126,7 +122,7 @@ def buttons_def():
 
 if __name__ == '__main__':
     pygame.init()
-    game_on = 0
+    # game_on = 0
     def loop():
         # BUTTONS ISTANCES
         game_on = 1

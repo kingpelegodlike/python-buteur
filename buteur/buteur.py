@@ -116,24 +116,22 @@ def is_trash_deck_card_under_mouse():
     mouse_pos = pygame.Vector2(pygame.mouse.get_pos())
     mouse_pos_x = mouse_pos[0]
     mouse_pos_y = mouse_pos[1]
-    logger.debug("Check mouse pos ({},{}) with trash".format(mouse_pos_x, mouse_pos_y))
-    if mouse_pos_x >= 400 and mouse_pos_x < 465 and mouse_pos_y >= 30 and mouse_pos_y < 133:
-        return True
-    else:
-        return False
+    logger.debug(f"Check mouse pos ({mouse_pos_x},{mouse_pos_y}) with trash")
+    is_under_mouse = mouse_pos_x >= 400 and mouse_pos_x < 465 and mouse_pos_y >= 30 and mouse_pos_y < 133
+    return is_under_mouse
 
 def is_play_deck_card_under_mouse(number):
     mouse_pos = pygame.Vector2(pygame.mouse.get_pos())
     mouse_pos_x = mouse_pos[0]
     mouse_pos_y = mouse_pos[1]
     if number == 1:
-        logger.debug("Check mouse pos ({},{}) with play area 1".format(mouse_pos_x, mouse_pos_y))
+        logger.debug(f"Check mouse pos ({mouse_pos_x},{mouse_pos_y}) with play area 1")
         if mouse_pos_x >= 300 and mouse_pos_x < 365 and mouse_pos_y >= 163 and mouse_pos_y < 266:
             return True
         else:
             return False
     elif number == 2:
-        logger.debug("Check mouse pos ({},{}) with play area 2".format(mouse_pos_x, mouse_pos_y))
+        logger.debug(f"Check mouse pos ({mouse_pos_x},{mouse_pos_y}) with play area 2")
         if mouse_pos_x >= 375 and mouse_pos_x < 440 and mouse_pos_y >= 163 and mouse_pos_y < 266:
             return True
         else:
@@ -148,10 +146,10 @@ def update_player_deck_surf(surface, player_deck):
             card_obj = player_deck.get_card(i)
             # card_img = pygame.image.load(os.path.join("img", "{}.png".format(card_obj.front_img)))
             card_img = pygame.image.load(card_obj.front_img)
-            logger.debug("Update player card number {} with {} image".format(i, card_obj.front_img))
+            logger.debug(f"Update player card number {i} with {card_obj.front_img} image")
             surface.blit(card_img, rect)
         else:
-            logger.debug("Update player card number {} with red image".format(i))
+            logger.debug(f"Update player card number {i} with red image")
             pygame.draw.rect(surface, "red", rect, 0)
 
 def draw_play_deck_card(surface, card1, card2):
@@ -207,12 +205,13 @@ def is_current_deck_card_to_drop(current_deck_card_selected):
 
 def on_click_play():
     print("Player click Play button")
-    click_play = True
+    # click_play = True
 
 def main():
-    click_play = False
+    # click_play = False
     pygame.init()
-    font = pygame.font.SysFont('', 32)
+    # font = pygame.font.SysFont('', 32)
+    pygame.font.SysFont('', 32)
     screen = pygame.display.set_mode((640, 540))
     player1_deck = Deck()
     player2_deck = Deck()
@@ -233,16 +232,16 @@ def main():
     # player1_deck.add_card(card)
     for card_file_path in pathlib.Path("./img").rglob("card_*.png"):
         card = Card(card_file_path)
-        logger.debug("Add card {} to Current Deck".format(card))
+        logger.debug(f"Add card {card} to Current Deck")
         current_deck.add_card(card)
-    for i in range(0, 8):
+    for _ in range(0, 8):
         # player1_deck.add_card(current_deck.remove_card())
         card = current_deck.remove_card()
-        logger.debug("Add card {} to Player1 Deck".format(card))
+        logger.debug(f"Add card {card} to Player1 Deck")
         player1_deck.add_card(card)
         # player2_deck.add_card(current_deck.remove_card())
         card = current_deck.remove_card()
-        logger.debug("Add card {} to Player2 Deck".format(card))
+        logger.debug(f"Add card {card} to Player2 Deck")
         player2_deck.add_card(card)
     ball_x_pos = 7
     ball_y_pos = 10
@@ -261,18 +260,18 @@ def main():
     football_field_surf = create_football_field_surf(ball_x_pos, ball_y_pos)
     clock = pygame.time.Clock()
     turn = "player1"
-    selected_piece = None
+    # selected_piece = None
     player_card_selected = None
     player_card_selected_number = -1
     played_card_number = 1
     current_deck_card_selected = None
     play_player_card = False
-    drag_current_deck_card_to_trash = False
+    # drag_current_deck_card_to_trash = False
     drop_current_deck_card_to_trash = False
-    drop_pos = None
+    # drop_pos = None
     while True:
         # piece, x, y = get_square_under_mouse(board)
-        current_deck_card = None
+        # current_deck_card = None
         current_deck_card_under_mouse = is_current_deck_card_under_mouse()
         player_card_under_mouse = is_player_card_under_mouse()
         events = pygame.event.get()
@@ -280,14 +279,13 @@ def main():
             if e.type == pygame.QUIT:
                 return
             if e.type == pygame.MOUSEBUTTONDOWN:
-                pass
                 # if piece != None:
                     # selected_piece = piece, x, y
                     # logger.debug("Selected piece at ( {},{} ) position".format(x,y))
                 if current_deck_card_under_mouse:
                     current_deck_card_selected = current_deck.get_card()
                     if current_deck_card_selected is not None:
-                        logger.debug("Selected current deck card with front image {}".format(current_deck_card_selected.front_img))
+                        logger.debug(f"Selected current deck card with front image {current_deck_card_selected.front_img}")
                 if player_card_under_mouse != -1:
                     if turn == "player1":
                         player_card_selected = player1_deck.get_card(player_card_under_mouse)
@@ -311,13 +309,13 @@ def main():
                     played_card_number += 1
 
                     if turn == "player1":
-                        logger.debug("Remove Player card number {}".format(player_card_selected_number))
+                        logger.debug(f"Remove Player card number {player_card_selected_number}")
                         player1_deck.remove_card(player_card_selected_number)
-                        logger.debug("Player have {} cards left".format(len(player1_deck.card_list)))
+                        logger.debug(f"Player have {len(player1_deck.card_list)} cards left")
                 if drop_current_deck_card_to_trash:
                     trash_deck.add_card(current_deck_card_selected)
                     current_deck.remove_card()
-                selected_piece = None
+                # selected_piece = None
                 player_card_selected = None
                 player_card_selected_number = -1
                 current_deck_card_selected = None
@@ -328,13 +326,13 @@ def main():
             # if click_play:
             if b0.pressed == 0:
                 logger.info("Play action")
-                click_play = False
+                # click_play = False
                 while play_deck.get_nb_cards() > 0:
                     logger.info("Remove card from Play Deck")
                     play_card = play_deck.remove_card()
-                    logger.info("Add card {} to Trash Deck".format(play_card))
+                    logger.info(f"Add card {play_card} to Trash Deck")
                     trash_deck.add_card(play_card)
-                    logger.info("Remove card from current Deck with {} cards".format(current_deck.get_nb_cards()))
+                    logger.info(f"Remove card from current Deck with {current_deck.get_nb_cards()} cards")
                     first_draw_card = current_deck.remove_card()
                     # first_draw_card = current_deck.get_card()
                     # logger.info(first_draw_card.print())
@@ -375,7 +373,7 @@ def main():
         # draw_selector(screen, piece, x, y)
         play_player_card = is_player_card_to_drop(player_card_selected, played_card_number)
         if play_player_card:
-            logger.info("Play player card {} number {}".format(player_card_selected.print(), played_card_number))
+            logger.info(f"Play player card {player_card_selected.print()} number {played_card_number}")
             b0.style = 1
         drop_current_deck_card_to_trash = is_current_deck_card_to_drop(current_deck_card_selected)
         if drop_current_deck_card_to_trash:
