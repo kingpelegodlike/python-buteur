@@ -22,4 +22,4 @@ jobs:
         pip install pylint
     - name: Analysing the code with pylint
       run: |
-        pylint --rcfile=.github/workflows/.pylintrc $(git ls-files 'buteur/*.py')
+        pylint --rcfile=.github/workflows/.pylintrc --fail-under=16 $(git ls-files 'buteur/*.py')
