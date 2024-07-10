@@ -67,12 +67,12 @@ def create_trash_deck_surf():
 def create_football_field_surf(ball_x_pos, ball_y_pos):
     football_field_surf = pygame.Surface((TILESIZE*16, TILESIZE*22))
     dark = False
-    for y in range(22):
-        for x in range(16):
-            rect = pygame.Rect(x*TILESIZE, y*TILESIZE, TILESIZE, TILESIZE)
+    for yaxis in range(22):
+        for xaxis in range(16):
+            rect = pygame.Rect(xaxis*TILESIZE, yaxis*TILESIZE, TILESIZE, TILESIZE)
             # football_field_piece_img = pygame.image.load(os.path.join("img", "football_field_x0_y0.png"))
             try:
-                football_field_piece_img = pygame.image.load(os.path.join("img", f"football_field_x{x}_y{y}.png"))
+                football_field_piece_img = pygame.image.load(os.path.join("img", f"football_field_x{xaxis}_y{yaxis}.png"))
             # except FileNotFoundError as fnfe:
             except FileNotFoundError:
                 # logger.error(fnfe)
@@ -248,7 +248,7 @@ def main():
     # BUTTONS ISTANCES
     game_on = 1
     # buttons_def()
-    b0 = Button((300, 300), "Play cards", 55, "black on grey", style=0,
+    play_button = Button((300, 300), "Play cards", 55, "black on grey", style=0,
         command=on_click_play)
     player_deck_surf = create_player_deck_surf(player1_deck)
     play_deck_surf = create_play_deck_surf()
@@ -275,10 +275,10 @@ def main():
         current_deck_card_under_mouse = is_current_deck_card_under_mouse()
         player_card_under_mouse = is_player_card_under_mouse()
         events = pygame.event.get()
-        for e in events:
-            if e.type == pygame.QUIT:
+        for event in events:
+            if event.type == pygame.QUIT:
                 return
-            if e.type == pygame.MOUSEBUTTONDOWN:
+            if event.type == pygame.MOUSEBUTTONDOWN:
                 # if piece != None:
                     # selected_piece = piece, x, y
                     # logger.debug("Selected piece at ( {},{} ) position".format(x,y))
@@ -291,7 +291,7 @@ def main():
                         player_card_selected = player1_deck.get_card(player_card_under_mouse)
                         player_card_selected_number = player_card_under_mouse
                         # logger.info("Selected player1 card number {} with front image {}".format(player_card_selected_number, player_card_selected.front_img))
-            if e.type == pygame.MOUSEBUTTONUP:
+            if event.type == pygame.MOUSEBUTTONUP:
                 # if drop_pos:
                     # piece, old_x, old_y = selected_piece
                     # board[old_y][old_x] = 0
@@ -319,12 +319,12 @@ def main():
                 player_card_selected = None
                 player_card_selected_number = -1
                 current_deck_card_selected = None
-                drop_pos = None
+                # drop_pos = None
 
         screen.fill(pygame.Color('grey'))
         if game_on:
             # if click_play:
-            if b0.pressed == 0:
+            if play_button.pressed == 0:
                 logger.info("Play action")
                 # click_play = False
                 while play_deck.get_nb_cards() > 0:
@@ -346,8 +346,8 @@ def main():
                 player_card_selected_number = -1
                 played_card_number = 1
                 current_deck_card_selected = None
-                b0.style = 0
-                b0.pressed = 1
+                play_button.style = 0
+                play_button.pressed = 1
             buttons.update()
             buttons.draw(screen)
         else:
@@ -374,7 +374,7 @@ def main():
         play_player_card = is_player_card_to_drop(player_card_selected, played_card_number)
         if play_player_card:
             logger.info(f"Play player card {player_card_selected.print()} number {played_card_number}")
-            b0.style = 1
+            play_button.style = 1
         drop_current_deck_card_to_trash = is_current_deck_card_to_drop(current_deck_card_selected)
         if drop_current_deck_card_to_trash:
             logger.info("Drop current card to trash")

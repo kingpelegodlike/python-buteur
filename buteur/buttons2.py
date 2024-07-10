@@ -1,8 +1,6 @@
+import sys
 import pygame
 import pygame.gfxdraw
-import sys
-
-
 
 pygame.init()
 screen = pygame.display.set_mode((600, 400))
@@ -21,9 +19,9 @@ class Button(pygame.sprite.Sprite):
         # --- colors ---
         self.colors = colors
         self.original_colors = colors
-        self.fg, self.bg = self.colors.split(" on ")
+        self.foreground, self.background = self.colors.split(" on ")
         if hover_colors == "red on green":
-            self.hover_colors = f"{self.bg} on {self.fg}"
+            self.hover_colors = f"{self.background} on {self.foreground}"
         else:
             self.hover_colors = hover_colors
         self.style = style
@@ -31,19 +29,19 @@ class Button(pygame.sprite.Sprite):
         # font
         self.font = pygame.font.SysFont("Arial", size)
         self.render()
-        self.x, self.y, self.w , self.h = self.text_render.get_rect()
-        self.x, self.y = position
-        self.rect = pygame.Rect(self.x, self.y, self.w, self.h)
+        self.xaxis, self.yaxis, self.width , self.height = self.text_render.get_rect()
+        self.xaxis, self.yaxis = position
+        self.rect = pygame.Rect(self.xaxis, self.yaxis, self.width, self.height)
         self.position = position
         self.pressed = 1
         buttons.add(self)
 
     def render(self):
-        self.text_render = self.font.render(self.text, 1, self.fg)
+        self.text_render = self.font.render(self.text, 1, self.foreground)
         self.image = self.text_render
 
     def update(self):
-        self.fg, self.bg = self.colors.split(" on ")
+        self.foreground, self.background = self.colors.split(" on ")
         if self.style == 0:
             self.draw_button0()
         elif self.style == 1:
@@ -55,24 +53,24 @@ class Button(pygame.sprite.Sprite):
 
     def draw_button0(self):
         ''' a linear border '''
-        pygame.draw.rect(screen, self.bg, (self.x, self.y, self.w , self.h))
-        pygame.gfxdraw.rectangle(screen, (self.x, self.y, self.w , self.h), (211,211,211))
+        pygame.draw.rect(screen, self.background, (self.xaxis, self.yaxis, self.width , self.height))
+        pygame.gfxdraw.rectangle(screen, (self.xaxis, self.yaxis, self.width , self.height), (211,211,211))
 
     def draw_button1(self):
         ''' draws 4 lines around the button and the background '''
         # horizontal up
-        pygame.draw.line(screen, (150, 150, 150), (self.x, self.y), (self.x + self.w , self.y), 5)
-        pygame.draw.line(screen, (150, 150, 150), (self.x, self.y - 2), (self.x, self.y + self.h), 5)
+        pygame.draw.line(screen, (150, 150, 150), (self.xaxis, self.yaxis), (self.xaxis + self.width , self.yaxis), 5)
+        pygame.draw.line(screen, (150, 150, 150), (self.xaxis, self.yaxis - 2), (self.xaxis, self.yaxis + self.height), 5)
         # horizontal down
-        pygame.draw.line(screen, (50, 50, 50), (self.x, self.y + self.h), (self.x + self.w , self.y + self.h), 5)
-        pygame.draw.line(screen, (50, 50, 50), (self.x + self.w , self.y + self.h), [self.x + self.w , self.y], 5)
+        pygame.draw.line(screen, (50, 50, 50), (self.xaxis, self.yaxis + self.height), (self.xaxis + self.width , self.yaxis + self.height), 5)
+        pygame.draw.line(screen, (50, 50, 50), (self.xaxis + self.width , self.yaxis + self.height), [self.xaxis + self.width , self.yaxis], 5)
         # background of the button
-        pygame.draw.rect(screen, self.bg, (self.x, self.y, self.w , self.h))
+        pygame.draw.rect(screen, self.background, (self.xaxis, self.yaxis, self.width , self.height))
 
     def draw_button2(self):
         ''' a linear border '''
-        pygame.draw.rect(screen, self.bg, (self.x, self.y, self.w , self.h))
-        pygame.gfxdraw.rectangle(screen, (self.x, self.y, self.w , self.h), self.borderc)
+        pygame.draw.rect(screen, self.background, (self.xaxis, self.yaxis, self.width , self.height))
+        pygame.gfxdraw.rectangle(screen, (self.xaxis, self.yaxis, self.width , self.height), self.borderc)
 
     def hover(self):
         ''' checks if the mouse is over the button and changes the color if it is true '''
