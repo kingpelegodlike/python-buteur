@@ -14,9 +14,15 @@ class Deck():
     def get_card(self, pos = -1):
         if len(self.card_list) == 0:
             return None
-        if pos > len(self.card_list):
+        if pos >= len(self.card_list):
             return None
         return self.card_list[pos]
+
+    def set_card_rect(self, pos, rect):
+        if pos < 0 or pos >= len(self.card_list):
+            return False
+        self.card_list[pos].rect = rect
+        return True
 
     def remove_card(self, pos = -1):
         try:

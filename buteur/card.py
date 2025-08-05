@@ -1,6 +1,8 @@
 import pathlib
 import re
 import pygame
+import logging
+logger = logging.getLogger("CARD")
 
 class Card():
     """
@@ -33,6 +35,7 @@ class Card():
         self.back_img = pygame.image.load("img/base_2.png")
         self.back_imgage_path = back_image
         self.get_attributes_from_file_name(pathlib.Path(front_image).stem)
+        self.rect = pygame.Rect(0, 0, 65, 103)
 
     def __repr__(self):
         direction = ""
@@ -55,10 +58,11 @@ class Card():
 
     def __str__(self):
         direction = ""
-        if hasattr(self, "first_move_list"):
+        if hasattr(self, "first_move_list") and self.first_move_list:
             direction += "first moves:"
-            for directions in self.first_move_list:
-                direction += f"({directions[0]},{directions[1]})"
+            direction += f"({self.first_move_list[0]},{self.first_move_list[1]})"
+            # for directions in self.first_move_list:
+                # direction += f"({directions[0]},{directions[1]})"
             # direction = self.first_directions
         if hasattr(self, "second_move_list"):
             direction += " second moves:"
@@ -74,10 +78,11 @@ class Card():
 
     def print(self):
         direction = ""
-        if hasattr(self, "first_move_list"):
+        if hasattr(self, "first_move_list") and self.first_move_list:
             direction += "first moves:"
-            for directions in self.first_move_list:
-                direction += f"({directions[0]},{directions[1]})"
+            direction += f"({self.first_move_list[0]},{self.first_move_list[1]})"
+            # for directions in self.first_move_list:
+                # direction += f"({directions[0]},{directions[1]})"
             # direction = self.first_directions
         if hasattr(self, "second_move_list"):
             direction += " second moves:"
@@ -99,7 +104,8 @@ class Card():
             path to an image file
         """
         attributes_list = file_name.split("_")
-        print(f"len(attributes_list):{attributes_list}")
+        # print(f"{len(attributes_list)}:{attributes_list}")
+        logger.debug("%s:%s", len(attributes_list), attributes_list)
         if attributes_list[0] != "card":
             return
         if len(attributes_list) > 1:
@@ -108,7 +114,8 @@ class Card():
                 if len(attributes_list) > 2:
                     self.color = attributes_list[2] # blue or red or hand
                     if len(attributes_list) > 3:
-                        self.first_move_list = []
+                        # self.first_move_list = []
+                        self.first_move_list = None
                         first_directions = attributes_list[3]
                         pattern = r"(\d+)(s|l|r|dl|dr)"
                         for match in re.finditer(pattern, first_directions):
@@ -116,17 +123,23 @@ class Card():
                                 direction_len = match.groups(i)[0]
                                 direction = match.groups(i)[1]
                                 if direction == "s":
-                                    self.first_move_list.append((0, int(direction_len)))
+                                    # self.first_move_list.append((0, int(direction_len)))
+                                    self.first_move_list = (0, int(direction_len))
                                 elif direction == "l":
-                                    self.first_move_list.append((-int(direction_len), 0))
+                                    # self.first_move_list.append((-int(direction_len), 0))
+                                    self.first_move_list = (-int(direction_len), 0)
                                 elif direction == "r":
-                                    self.first_move_list.append((int(direction_len), 0))
+                                    # self.first_move_list.append((int(direction_len), 0))
+                                    self.first_move_list = (int(direction_len), 0)
                                 elif direction == "dl":
-                                    self.first_move_list.append((-int(direction_len), int(direction_len)))
+                                    # self.first_move_list.append((-int(direction_len), int(direction_len)))
+                                    self.first_move_list = (-int(direction_len), int(direction_len))
                                 elif direction == "dr":
-                                    self.first_move_list.append((int(direction_len), int(direction_len)))
+                                    # self.first_move_list.append((int(direction_len), int(direction_len)))
+                                    self.first_move_list = (int(direction_len), int(direction_len))
                         if len(attributes_list) > 4:
-                            print("%s:%s", len(attributes_list), attributes_list)
+                            # print(f"{len(attributes_list)}:{attributes_list}")
+                            logger.debug("%s:%s", len(attributes_list), attributes_list)
                             second_directions = attributes_list[4]
                             if second_directions.startswith("v"):
                                 return
@@ -147,7 +160,8 @@ class Card():
                                     elif direction == "dr":
                                         self.second_move_list.append((int(direction_len), int(direction_len)))
                         if len(attributes_list) > 5:
-                            print("%s:%s", len(attributes_list), attributes_list)
+                            # print(f"{len(attributes_list)}:{attributes_list}")
+                            logger.debug("%s:%s", len(attributes_list), attributes_list)
                             third_directions = attributes_list[5]
                             if third_directions.startswith("v"):
                                 return
@@ -170,7 +184,8 @@ class Card():
             elif self.type in ["freekick", "goalkeeper"]:
                 self.color = None
                 if len(attributes_list) > 2:
-                    self.first_move_list = []
+                    # self.first_move_list = []
+                    self.first_move_list = None
                     first_directions = attributes_list[2]
                     pattern = r"(\d+)(s|l|r|dl|dr)"
                     for match in re.finditer(pattern, first_directions):
@@ -178,17 +193,23 @@ class Card():
                             direction_len = match.groups(i)[0]
                             direction = match.groups(i)[1]
                             if direction == "s":
-                                self.first_move_list.append((0, int(direction_len)))
+                                # self.first_move_list.append((0, int(direction_len)))
+                                self.first_move_list = (0, int(direction_len))
                             elif direction == "l":
-                                self.first_move_list.append((-int(direction_len), 0))
+                                # self.first_move_list.append((-int(direction_len), 0))
+                                self.first_move_list = (-int(direction_len), 0)
                             elif direction == "r":
-                                self.first_move_list.append((int(direction_len), 0))
+                                # self.first_move_list.append((int(direction_len), 0))
+                                self.first_move_list = (int(direction_len), 0)
                             elif direction == "dl":
-                                self.first_move_list.append((-int(direction_len), int(direction_len)))
+                                # self.first_move_list.append((-int(direction_len), int(direction_len)))
+                                self.first_move_list = (-int(direction_len), int(direction_len))
                             elif direction == "dr":
-                                self.first_move_list.append((int(direction_len), int(direction_len)))
+                                # self.first_move_list.append((int(direction_len), int(direction_len)))
+                                self.first_move_list = (int(direction_len), int(direction_len))
                     if len(attributes_list) > 3:
-                        print("%s:%s", len(attributes_list), attributes_list)
+                        # print(f"{len(attributes_list)}:{attributes_list}")
+                        logger.debug("%s:%s", len(attributes_list), attributes_list)
                         self.second_move_list = []
                         second_directions = attributes_list[3]
                         pattern = r"(\d+)(s|l|r|dl|dr)"

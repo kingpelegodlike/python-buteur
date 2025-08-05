@@ -3,12 +3,28 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 name = "pypi"
 
+[[source]]
+url = "https://%ARTIFACTORY_RO_USER%:%ARTIFACTORY_RO_TOKEN%@artifactory.global.ingenico.com/artifactory/api/pypi/core-pypi/simple"
+verify_ssl = true
+name = "%ARTIFACTORY_RO_USER%:%ARTIFACTORY_RO_TOKEN%@artifactoryglobalingenico"
+
+[[source]]
+url = "https://%ARTIFACTORY_RO_USER%:%ARTIFACTORY_RO_TOKEN%@artifactory.global.ingenico.com/artifactory/api/pypi/core-pypi/simple"
+verify_ssl = true
+name = "%ARTIFACTORY_RO_USER%:%ARTIFACTORY_RO_TOKEN%@artifactoryglobalingenico"
+
+[[source]]
+url = "https://%ARTIFACTORY_RO_USER%:%ARTIFACTORY_RO_TOKEN%@artifactory.global.ingenico.com/artifactory/api/pypi/core-pypi/simple"
+verify_ssl = true
+name = "%ARTIFACTORY_RO_USER%:%ARTIFACTORY_RO_TOKEN%@artifactoryglobalingenico"
+
 [packages]
 pygame = "*"
 
 [dev-packages]
 pytest = "*"
 pytest-cov = "*"
+pylint = "*"
 
 [requires]
 python_version = "3.10"
